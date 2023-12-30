@@ -5,13 +5,13 @@ section .data
 section .text
 global _start
 _start:
-	mov eax, num1 ;
-	mov ebx, 0 ;
+	mov al, [num1] ; If we store in the extended register we get weird numbers
+	mov bl, [num2] ; See above
 	add eax, ebx  ; The numbers are summed in the eax register
-
+	
 	; Convert EAX to ASCII and store it onto the stack
 	sub esp, 16 		; reserve space on stack
-	mov ecx, 1		; Number length
+	mov ecx, 10		; Number length
 	mov ebx, 16
 	.L1:
 	xor edx, edx 		; No idea what this does
@@ -30,7 +30,7 @@ _start:
 	int 0x80		; syscall
 
 	add esp, 16		; restore the stack
-
+.quit:
 	mov eax, 1		; SYS_EXIT
 	xor ebx, ebx		; Return value
 	int 0x80		; syscall

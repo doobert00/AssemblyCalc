@@ -17,15 +17,15 @@ from the command line in Docker. You also have to unminimize the image.
 
 - Run some assembly in the VM
 - Command line
-- Move "unminimize" into the Dockerfile
-- Figure out how to run from local command line
+    * Move "unminimize" into the Dockerfile
+    * Figure out how to run from local command line
 - Do some simple arithmetic to relearn asm
 - Syscalls
-- Look up the syscalls in this linux distro
-- Figure out read/write
+    * Look up the syscalls in this linux distro
+    * Figure out read/write
 - UI 
 - Math
-- Parse tree data strucuture
-- int <-> binary
+    * Parse tree data strucuture
+    * int <-> binary
 - Error
-- Deal with error handling
+    * Deal with error handling

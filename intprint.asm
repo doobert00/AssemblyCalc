@@ -1,12 +1,12 @@
 section .data
-	num1 db 1 ;
-	num2 db 2 ;
+	num1 db 1 
+	num2 db 2000 
 
 section .text
 global _start
 _start:
 	mov al, [num1] ; If we store in the extended register we get weird numbers
-	mov bl, [num2] ; See above
+	mov bx, [num2] ; See above
 	add eax, ebx  ; The numbers are summed in the eax register
 
 ; Print the value contained in eax
@@ -18,10 +18,10 @@ _start:
 	.L1:
 	xor edx, edx 		; No idea what this does
 	div ecx      		; Extract the last decimal digit (why?)
-	or dl, 0x30  		; Convert everything else to ASCII (how?)
-	sub ebx, 1   		;
-	mov [esp+ebx], dl 	; Store the remainder on the stack in reverse...
-	test eax, eax 		; until there is nothing left to divide
+	or dl, 0x30  		; Adding 0x30 (0 in ASCII) converts 0-9 binary to ascii
+	sub ebx, 1   		; Point lower on the stack
+	mov [esp+ebx], dl 	; Using ebx and flipped-ness of stack to reverse order
+	test eax, eax 		; Jump (below) if 
 	jnz .L1
 
 	mov eax, 4		; SYS_WRITE

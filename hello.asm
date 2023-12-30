@@ -2,7 +2,7 @@ section .data
 	hello db 'Hello, World',0
 section .text
 	global _start
-_start
+_start:
 	mov edx, 13 ;
 	mov ecx, hello ;
 	mov ebx, 1 ;

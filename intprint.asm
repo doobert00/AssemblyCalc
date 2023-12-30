@@ -8,7 +8,9 @@ _start:
 	mov al, [num1] ; If we store in the extended register we get weird numbers
 	mov bl, [num2] ; See above
 	add eax, ebx  ; The numbers are summed in the eax register
-	
+
+; Print the value contained in eax
+.print:
 	; Convert EAX to ASCII and store it onto the stack
 	sub esp, 16 		; reserve space on stack
 	mov ecx, 10		; Number length

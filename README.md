@@ -7,7 +7,7 @@ docker build -t calc:1.0 .
 To run the image do:
 
 ```
-docker run -t -d --name calc calc:1.0
+docker run -it -d --name calc calc:1.0
 ```
 
 For some reason it runs in a detached state. You can run your Linux image

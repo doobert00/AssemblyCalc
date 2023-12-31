@@ -1,12 +1,12 @@
 section .data
-	num1 db 1 
-	num2 db 2000 
+	num1 dq 1 
+	num2 dq 200000000 
 
 section .text
 global _start
 _start:
-	mov al, [num1] ; If we store in the extended register we get weird numbers
-	mov bx, [num2] ; See above
+	mov eax, [num1] ; If we store in the extended register we get weird numbers
+	mov ebx, [num2] ; See above
 	add eax, ebx  ; The numbers are summed in the eax register
 
 ; Print the value contained in eax

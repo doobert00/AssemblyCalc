@@ -16,7 +16,7 @@ _start:
 	mov ecx, 10		; Number length
 	mov ebx, 16
 	.L1:
-	xor edx, edx 		; No idea what this does
+	xor edx, edx 		; Zero out the full d register
 	div ecx      		; Extract the last decimal digit (why?)
 	or dl, 0x30  		; Adding 0x30 (0 in ASCII) converts 0-9 binary to ascii
 	sub ebx, 1   		; Point lower on the stack

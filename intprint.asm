@@ -13,16 +13,16 @@ _start:
 .print:
 	; Convert EAX to ASCII and store it onto the stack
 	sub esp, 16 		; reserve space on stack
-	mov ecx, 10		; Number length
+	mov ecx, 10		; Coverting binary to base 10 in div ecx.
 	mov ebx, 16
-	.L1:
+.L1:
 	xor edx, edx 		; Zero out the full d register
 	div ecx      		; Extract the last decimal digit (why?)
 	or dl, 0x30  		; Adding 0x30 (0 in ASCII) converts 0-9 binary to ascii
 	sub ebx, 1   		; Point lower on the stack
 	mov [esp+ebx], dl 	; Using ebx and flipped-ness of stack to reverse order
-	test eax, eax 		; Jump (below) if 
-	jnz .L1
+	test eax, eax 		; eax = 0 <=> ZF = 1 
+	jnz .L1			; jump not if ZF = 1 (use jz for jump if ZF = 1)
 
 	mov eax, 4		; SYS_WRITE
 	lea ecx, [esp+ebx]	; Point to the first ASCII digit

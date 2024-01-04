@@ -39,41 +39,49 @@ read:
 	mov ebx, [addition]
 	test eax, ebx
 	jnz save_to_stack	;Save to stack
+	jmp read
 
 	mov eax, [buffer]	;If buffer = -
 	mov ebx, [subtraction]
 	test eax, ebx
 	jnz save_to_stack	;Save to stack
-	
+	jmp read
+
 	mov eax, [buffer]	;If buffer = *
 	mov ebx, [multiplication]
 	test eax, ebx
 	jnz save_to_stack	;Save to stack
-
+	jmp read
+	
 	mov eax, [buffer]	;If buffer = /
 	mov ebx, [division]
 	test eax, ebx
 	jnz save_to_stack	;Save to stack
+	jmp read	
 	
 	mov eax, [buffer]	;If buffer == linefeed 
 	mov ebx, [newline]	; (This means we're at end of expr)
 	test eax, ebx		; 
 	jnz parse		;Evaluate expression on the stack
+ 
+	mov eax, [buffer]	;If buffer < 0 in ASCII
+	mov ebx, [lwr_int]	; (This means buffer is not integer)
+	cmp eax, ebx		;
+	jl invalid_expr_err	;Invalid character exception
 	
-	;TODO: Check if buffer is in integer range 
+	mov eax, [buffer]	;If buffer > 9 in ASCII
+	mov ebx, [upper_int]	; (This means buffer is not integer)
+	cmp eax, ebx		;
+	jg invalid_expr_err 	;Invalid character exception
 	
-	jmp invalid_expr_err	;If we've gotten here there was an invalid char. 
+	mov eax, [buffer]	
+	sub eax, [lwr_int]	;Convert eax (in ASCII) to binary
+	jmp save_to_stack	;Save eax to stack since we're not at end of input
 
 ;TODO: Save a value to the stack
+;Input: eax is 32-bit value to save to stack
 save_to_stack:
-	jmp exit
-	;See if we can jump and link here
-
-;TODO: Convert ascii (input) to binary
-ascii_to_bin:
-	jmp exit	
-	;jmp back to parse and save to stack
-	;See if we can jump and link here
+	jmp read
 
 ;TODO: Convert binary to ascii (output)
 bin_to_ascii:

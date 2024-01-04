@@ -6,7 +6,9 @@ _start:
 	mov ebx, 1
 	cmp eax, ebx ;Jump to end if eax >= ebx
 	jge end
-	mov eax, 2
+
+
+	test eax, eax
 end:
 	mov eax, 1
 	int 0x80

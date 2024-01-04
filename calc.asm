@@ -86,12 +86,11 @@ read:
 ;TODO: Save a value to the stack
 ;Input: eax is 32-bit value to save to stack
 save_to_stack:
-	lea ebx, [esp] 	;Recall the tail of stack is expr length
-	mov [esp], eax	;Put 32-bit value on the stack
-	sub esp, 32	;Reserve space on stack for length
-	add ebx, 1	;Add one to stack length
-	mov [esp], ebx	;Put new length back on tail of stack
-	jmp read	
+	pop ebx		;Recall the tail of stack has expr length
+	push eax	;Push the character to the stack
+	add ebx, 1	;Increment expression length
+	push ebx	;Push the length to the stack
+	jmp read	;Continue reading characters
 
 ;TODO: Convert binary to ascii (output)
 bin_to_ascii:

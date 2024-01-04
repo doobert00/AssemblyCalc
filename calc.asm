@@ -43,25 +43,21 @@ read:
 	mov ebx, [addition]
 	test eax, ebx
 	jnz save_to_stack	;Save to stack
-	jmp read
 
 	mov eax, [buffer]	;If buffer = -
 	mov ebx, [subtraction]
 	test eax, ebx
 	jnz save_to_stack	;Save to stack
-	jmp read
 
 	mov eax, [buffer]	;If buffer = *
 	mov ebx, [multiplication]
 	test eax, ebx
 	jnz save_to_stack	;Save to stack
-	jmp read
 	
 	mov eax, [buffer]	;If buffer = /
 	mov ebx, [division]
 	test eax, ebx
 	jnz save_to_stack	;Save to stack
-	jmp read	
 	
 	;NOTE: WE WILL PARSE IFF WE FIND A LINEFEED (ELSE WE ERROR)
 	mov eax, [buffer]	;If buffer == linefeed 
@@ -70,12 +66,12 @@ read:
 	jnz parse		;Evaluate expression on the stack
  
 	mov eax, [buffer]	;If buffer < 0 in ASCII
-	mov ebx, [lwr_int]	; (This means buffer is not integer)
+	mov ebx, [lwr_int]	; (This means buffer is not integer or math symbol)
 	cmp eax, ebx		;
 	jl invalid_expr_err	;Invalid character exception
 	
 	mov eax, [buffer]	;If buffer > 9 in ASCII
-	mov ebx, [upper_int]	; (This means buffer is not integer)
+	mov ebx, [upper_int]	; (This means buffer is not integer or math symbol)
 	cmp eax, ebx		;
 	jg invalid_expr_err 	;Invalid character exception
 	
@@ -100,7 +96,11 @@ bin_to_ascii:
 
 ;TODO: Parse and evaluate the expression from the stack
 parse:
-	jmp exit	
+	pop eax		;We now have the stack length
+	test eax, 0	;If length = 0
+	jnz exit	;Exit
+parse_loop:
+		
 
 ;An invalid expression was provided. Print error.	
 invalid_expr_err:

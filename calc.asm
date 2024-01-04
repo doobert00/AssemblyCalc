@@ -23,6 +23,10 @@ _start:
 	mov ebx, 1;	; stdout
 	mov eax, 4	; SYS_WRITE
 	int 0x80	; syscall
+	
+	mov eax, 0	;We're using the lowest entry in the stack
+	sub esp, 32	;to count the number of entries
+	mov [esp], eax	;We initialize w/ zero entries
 read:
 	mov eax, 3	; SYS_READ
 	mov ebx, 0	; stdin
@@ -59,6 +63,7 @@ read:
 	jnz save_to_stack	;Save to stack
 	jmp read	
 	
+	;NOTE: WE WILL PARSE IFF WE FIND A LINEFEED (ELSE WE ERROR)
 	mov eax, [buffer]	;If buffer == linefeed 
 	mov ebx, [newline]	; (This means we're at end of expr)
 	test eax, ebx		; 
@@ -77,11 +82,16 @@ read:
 	mov eax, [buffer]	
 	sub eax, [lwr_int]	;Convert eax (in ASCII) to binary
 	jmp save_to_stack	;Save eax to stack since we're not at end of input
-
+	
 ;TODO: Save a value to the stack
 ;Input: eax is 32-bit value to save to stack
 save_to_stack:
-	jmp read
+	lea ebx, [esp] 	;Recall the tail of stack is expr length
+	mov [esp], eax	;Put 32-bit value on the stack
+	sub esp, 32	;Reserve space on stack for length
+	add ebx, 1	;Add one to stack length
+	mov [esp], ebx	;Put new length back on tail of stack
+	jmp read	
 
 ;TODO: Convert binary to ascii (output)
 bin_to_ascii:

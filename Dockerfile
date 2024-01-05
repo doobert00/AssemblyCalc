@@ -6,8 +6,8 @@ RUN apt-get install -y nasm binutils
 
 COPY input.asm /app/
 
-RUN nasm -f elf -o /app/input.o /app/input.asm
-RUN ld -m elf_i386 -s -o /app/input /app/input.o
+RUN nasm -f elf -o /app/calc.o /app/calc.asm
+RUN ld -m elf_i386 -s -o /app/calc /app/calc.o
 
 #FROM alpine:latest
 

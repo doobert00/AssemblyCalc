@@ -1,6 +1,6 @@
 section .bss
 	buffer resb 1	; Reserve one byte for reading in user input
-	number resp 4	; Reserve for summing numbers in
+	number resb 4	; Reserve for summing numbers in
 section .data
 	welcome db "Please enter an equation",13,10,'$' 	;The welcome string	
 	count dq 0						;Expression char len
@@ -13,9 +13,9 @@ section .data
 	upper_int dq 57						; 9 in ASCII
 
 	multiplication dq 42					; * in ASCII
-	addiion dq 43						; + in ASCII
-	subtraction 45						; - in ASCII
-	division 47						; / in ASCII
+	addition dq 43						; + in ASCII
+	subtraction dq 45					; - in ASCII
+	division dq 47						; / in ASCII
 
 section .text
 global _start
@@ -135,8 +135,10 @@ read_loop:
 
 
 read_recurse:
-	push [number]
-	mov [number], 0
+	mov ebx, [number]
+	push ebx
+	mov ebx, 0
+	mov [number], ebx
 	mov ebx, [count]
 	add ebx, 1
 	mov [count], ebx	
@@ -146,10 +148,11 @@ read_symbol:
 	mov [count], ebx
 	push eax
 	jmp read
-
 read_exit:
-	push [number]
-	mov [number], 0
+	mov ebx, [number]
+	push ebx
+	mov ebx, 0
+	mov [number], ebx
 	mov ebx, [count]
 	add ebx, 1
 	mov [count], ebx
@@ -158,8 +161,9 @@ read_exit:
 
 ;TODO: Parse and evaluate the expression from the stack
 parse:
-	test count, 0	;If expr length = 0
-	jnz exit	;Exit
+	mov eax, 0
+	test [count], eax	;If expr length = 0
+	jnz exit		;Exit
 parse_loop1:		
 	pop eax			
 	mov ebx, [addition]

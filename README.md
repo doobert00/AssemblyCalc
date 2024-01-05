@@ -1,3 +1,22 @@
+***AssemblyCalc***
+We've written a calculator using 32-bit x86 assembly code. Development is simplist on a Linux
+machine (or VM) using the NASM assembler and GDB debugging tool.
+
+***Remark***
+*As of now the program calc.asm only saves stdin to stack*
+
+If you have an x86 machine (and trust my code) you can run with:
+```
+nasm -f elf -o <file>.o -o <file>.arm 
+```
+```
+ld -m elf_i386 -o <file> <file>.o
+```
+```
+./<file>
+```
+
+***You Can Also Use the Docker Image***
 To build the image do:
 
 ```
@@ -9,23 +28,3 @@ To run the image do:
 ```
 docker run -it -d --name calc calc:1.0
 ```
-
-For some reason it runs in a detached state. You can run your Linux image
-from the command line in Docker. You also have to unminimize the image.
-
-**TODO:**
-
-- Run some assembly in the VM
-- Command line
-    * Move "unminimize" into the Dockerfile
-    * Figure out how to run from local command line
-- Do some simple arithmetic to relearn asm
-- Syscalls
-    * Look up the syscalls in this linux distro
-    * Figure out read/write
-- UI 
-- Math
-    * Parse tree data strucuture
-    * int <-> binary
-- Error
-    * Deal with error handling

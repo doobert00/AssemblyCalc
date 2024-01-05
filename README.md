@@ -5,6 +5,7 @@ machine (or VM) using the NASM assembler and GDB debugging tool.
 ## Remarks
 - *As of now the program calc.asm only saves stdin to stack*
 - The asm_training directory has some simple programs for practice
+- Filenames (lines 9,10) in the Dockerfile indicate which program is Dockering
   
 ## Running
 If you have an x86 machine (and trust my code) you can run with:

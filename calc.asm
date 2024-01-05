@@ -1,8 +1,11 @@
 section .bss
 	buffer resb 1	; Reserve one byte for reading in user input
+	number resp 4	; Reserve for summing numbers in
 section .data
 	welcome db "Please enter an equation",13,10,'$' 	;The welcome string	
-	
+	count dq 0						;Expression char len
+	ten dq 10						;Useful for powers of 10
+
 	newline dq 10						; Linefeed in ASCII
 	space dq 32						; Space in ASCII
 
@@ -24,9 +27,8 @@ _start:
 	mov eax, 4	; SYS_WRITE
 	int 0x80	; syscall
 	
-	mov eax, 0	;We're using the lowest entry in the stack
-	sub esp, 32	;to count the number of entries
-	mov [esp], eax	;We initialize w/ zero entries
+	mov eax, 0
+	push eax	; We're using the lowest entry in the stack to count expr length
 read:
 	mov eax, 3	; SYS_READ
 	mov ebx, 0	; stdin
@@ -42,29 +44,29 @@ read:
 	mov eax, [buffer]	;If buffer = +
 	mov ebx, [addition]
 	test eax, ebx
-	jnz save_to_stack	;Save to stack
+	jnz read_symbol	
 
 	mov eax, [buffer]	;If buffer = -
 	mov ebx, [subtraction]
 	test eax, ebx
-	jnz save_to_stack	;Save to stack
+	jnz read_symbol	
 
 	mov eax, [buffer]	;If buffer = *
 	mov ebx, [multiplication]
 	test eax, ebx
-	jnz save_to_stack	;Save to stack
-	
+	jnz read_symbol
+
 	mov eax, [buffer]	;If buffer = /
 	mov ebx, [division]
 	test eax, ebx
-	jnz save_to_stack	;Save to stack
+	jnz read_symbol		
 	
 	;NOTE: WE WILL PARSE IFF WE FIND A LINEFEED (ELSE WE ERROR)
 	mov eax, [buffer]	;If buffer == linefeed 
 	mov ebx, [newline]	; (This means we're at end of expr)
 	test eax, ebx		; 
 	jnz parse		;Evaluate expression on the stack
- 
+
 	mov eax, [buffer]	;If buffer < 0 in ASCII
 	mov ebx, [lwr_int]	; (This means buffer is not integer or math symbol)
 	cmp eax, ebx		;
@@ -77,30 +79,106 @@ read:
 	
 	mov eax, [buffer]	
 	sub eax, [lwr_int]	;Convert eax (in ASCII) to binary
-	jmp save_to_stack	;Save eax to stack since we're not at end of input
-	
-;TODO: Save a value to the stack
-;Input: eax is 32-bit value to save to stack
-save_to_stack:
-	pop ebx		;Recall the tail of stack has expr length
-	push eax	;Push the character to the stack
-	add ebx, 1	;Increment expression length
-	push ebx	;Push the length to the stack
-	jmp read	;Continue reading characters
+	mov [number], eax
+read_loop:
+	mov eax, 3	; SYS_READ
+	mov ebx, 0 	; stdin
+	mov ecx, buffer	; buffer for one char
+	mov edx, 1	; read in one char
+	int 0x80
 
-;TODO: Convert binary to ascii (output)
-bin_to_ascii:
-	jmp exit
-	;jmp to whever we write output
-	;See if we can jump and link here
+	mov eax, [buffer]	;Ignore spaces
+	mov ebx, [space]
+	test eax, ebx
+	jnz read_loop	
+	
+	mov eax, [buffer]	;+
+	mov ebx, [addition]	;BASE CASE: Find a symbol
+	test eax, ebx		
+	jnz read_recurse
+	
+	mov eax, [buffer]
+	mov ebx, [subtraction]	
+	test eax, ebx
+	jnz read_recurse
+	
+	mov eax, [buffer]
+	mov ebx, [multiplication]
+	test eax, ebx
+	jnz read_recurse
+	
+	mov eax, [buffer]
+	mov ebx, [division]
+	test eax, ebx
+	jnz read_recurse
+
+	mov eax, [buffer]	;Find a line feed. End of expr
+	mov ebx, [newline]
+	test eax, ebx
+	jnz read_exit
+	
+	mov eax, [buffer]
+	mov ebx, [lwr_int]
+	cmp eax, ebx
+	jl invalid_expr_err
+	mov eax, [buffer]
+	mov ebx, [upper_int]
+	cmp eax, ebx
+	jg invalid_expr_err
+
+	mov eax, [buffer]	;In this case we've found a number
+	mov ebx, [number]
+	imul ebx, 10		;Base 10 parsing
+	add ebx, eax		;Sum
+	mov [number], ebx
+	jmp read_loop
+
+
+read_recurse:
+	push [number]
+	mov [number], 0	
+read_symbol:
+	push eax
+	jmp read
+
+read_exit:
+	push [number]
+	mov [number], 0
+	jmp parse
+
 
 ;TODO: Parse and evaluate the expression from the stack
 parse:
-	pop eax		;We now have the stack length
-	test eax, 0	;If length = 0
+	test count, 0	;If expr length = 0
 	jnz exit	;Exit
-parse_loop:
-		
+parse_loop1:		
+	pop eax			
+	mov ebx, [addition]
+	test eax, ebx
+	jnz invalid_expr_err
+	mov ebx, [subtraction]
+	test eax, ebx
+
+	mov ebx, [multiplication]
+	test eax, ebx
+
+	mov ebx, [division]
+	test eax, ebx
+
+parse_loop2:	
+	pop eax		
+	mov ebx, [addition]
+	test eax, ebx
+	
+	mov ebx, [subtraction]
+	test eax, ebx
+
+	mov ebx, [multiplication]
+	test eax, ebx
+
+	mov ebx, [division]
+	test eax, ebx
+	
 
 ;An invalid expression was provided. Print error.	
 invalid_expr_err:

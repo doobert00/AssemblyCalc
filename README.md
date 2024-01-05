@@ -1,10 +1,11 @@
-***AssemblyCalc***
+# AssemblyCalc
 We've written a calculator using 32-bit x86 assembly code. Development is simplist on a Linux
 machine (or VM) using the NASM assembler and GDB debugging tool.
 
-***Remark***
+## Remark
 *As of now the program calc.asm only saves stdin to stack*
 
+## Running
 If you have an x86 machine (and trust my code) you can run with:
 ```
 nasm -f elf -o <file>.o -o <file>.arm 
@@ -16,7 +17,7 @@ ld -m elf_i386 -o <file> <file>.o
 ./<file>
 ```
 
-***You Can Also Use the Docker Image***
+## Running in Docker
 To build the image do:
 
 ```

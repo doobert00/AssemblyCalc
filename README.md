@@ -2,9 +2,10 @@
 We've written a calculator using 32-bit x86 assembly code. Development is simplist on a Linux
 machine (or VM) using the NASM assembler and GDB debugging tool.
 
-## Remark
-*As of now the program calc.asm only saves stdin to stack*
-
+## Remarks
+- *As of now the program calc.asm only saves stdin to stack*
+- The asm_training directory has some simple programs for practice
+  
 ## Running
 If you have an x86 machine (and trust my code) you can run with:
 ```

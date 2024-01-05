@@ -136,14 +136,23 @@ read_loop:
 
 read_recurse:
 	push [number]
-	mov [number], 0	
+	mov [number], 0
+	mov ebx, [count]
+	add ebx, 1
+	mov [count], ebx	
 read_symbol:
+	mov ebx, [count]
+	add ebx, 1
+	mov [count], ebx
 	push eax
 	jmp read
 
 read_exit:
 	push [number]
 	mov [number], 0
+	mov ebx, [count]
+	add ebx, 1
+	mov [count], ebx
 	jmp parse
 
 

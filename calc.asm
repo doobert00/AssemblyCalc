@@ -38,34 +38,34 @@ read:
 	
 	mov eax, [buffer]	;If buffer = space
 	mov ebx, [space]	
-	test eax, ebx
-	jnz read		;Don't save buff read next char
+	cmp eax, ebx
+	je read		;Don't save buff read next char
 	
 	mov eax, [buffer]	;If buffer = +
 	mov ebx, [addition]
-	test eax, ebx
-	jnz read_symbol	
+	cmp eax, ebx
+	je read_symbol	
 
 	mov eax, [buffer]	;If buffer = -
 	mov ebx, [subtraction]
-	test eax, ebx
-	jnz read_symbol	
+	cmp eax, ebx
+	je read_symbol	
 
 	mov eax, [buffer]	;If buffer = *
 	mov ebx, [multiplication]
-	test eax, ebx
-	jnz read_symbol
+	cmp eax, ebx
+	je read_symbol
 
 	mov eax, [buffer]	;If buffer = /
 	mov ebx, [division]
-	test eax, ebx
-	jnz read_symbol		
+	cmp eax, ebx
+	je read_symbol		
 	
 	;NOTE: WE WILL PARSE IFF WE FIND A LINEFEED (ELSE WE ERROR)
 	mov eax, [buffer]	;If buffer == linefeed 
 	mov ebx, [newline]	; (This means we're at end of expr)
-	test eax, ebx		; 
-	jnz parse		;Evaluate expression on the stack
+	cmp eax, ebx		; 
+	je parse		;Evaluate expression on the stack
 
 	mov eax, [buffer]	;If buffer < 0 in ASCII
 	mov ebx, [lwr_int]	; (This means buffer is not integer or math symbol)
@@ -89,33 +89,33 @@ read_loop:
 
 	mov eax, [buffer]	;Ignore spaces
 	mov ebx, [space]
-	test eax, ebx
-	jnz read_loop	
+	cmp eax, ebx
+	je read_loop	
 	
 	mov eax, [buffer]	;+
 	mov ebx, [addition]	;BASE CASE: Find a symbol
-	test eax, ebx		
-	jnz read_recurse
+	cmp eax, ebx		
+	je read_recurse
 	
 	mov eax, [buffer]
 	mov ebx, [subtraction]	
-	test eax, ebx
-	jnz read_recurse
+	cmp eax, ebx
+	je read_recurse
 	
 	mov eax, [buffer]
 	mov ebx, [multiplication]
-	test eax, ebx
-	jnz read_recurse
+	cmp eax, ebx
+	je read_recurse
 	
 	mov eax, [buffer]
 	mov ebx, [division]
-	test eax, ebx
-	jnz read_recurse
+	cmp eax, ebx
+	je read_recurse
 
 	mov eax, [buffer]	;Find a line feed. End of expr
 	mov ebx, [newline]
-	test eax, ebx
-	jnz read_exit
+	cmp eax, ebx
+	je read_exit
 	
 	mov eax, [buffer]
 	mov ebx, [lwr_int]

@@ -80,6 +80,8 @@ read:
 	mov eax, [buffer]	
 	sub eax, [lwr_int]	;Convert eax (in ASCII) to binary
 	mov [number], eax
+	mov eax, 0
+	mov [buffer], eax 
 read_loop:
 	mov eax, 3	; SYS_READ
 	mov ebx, 0 	; stdin
@@ -131,6 +133,8 @@ read_loop:
 	imul ebx, 10		;Base 10 parsing
 	add ebx, eax		;Sum
 	mov [number], ebx
+	mov eax, 0
+	mov [buffer], eax
 	jmp read_loop
 
 
@@ -147,6 +151,8 @@ read_symbol:
 	add ebx, 1
 	mov [count], ebx
 	push eax
+	mov eax, 0
+	mov [buffer], eax
 	jmp read
 read_exit:
 	mov ebx, [number]
@@ -195,6 +201,13 @@ parse_loop2:
 
 ;An invalid expression was provided. Print error.	
 invalid_expr_err:
+	mov edx, 26	; 24 chars in welcome msg
+	mov ecx, welcome
+	mov ebx, 1;	; stdout
+	mov eax, 4	; SYS_WRITE
+	int 0x80	; syscall
+	
+	
 	mov eax, 1
 	int 0x80
 

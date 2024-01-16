@@ -2,7 +2,9 @@ section .bss
 	buffer resb 1	; Reserve one byte for reading in user input
 	number resb 4	; Reserve for summing numbers in
 section .data
-	welcome db "Please enter an equation",13,10,'$' 	;The welcome string	
+	welcome db "Please enter an equation",13,10	 	;The welcome string	
+	error db "Error",13,10					;The error string
+
 	count dq 0						;Expression char len
 	ten dq 10						;Useful for powers of 10
 
@@ -21,7 +23,7 @@ section .text
 global _start
 
 _start:
-	mov edx, 26	; 24 chars in welcome msg
+	mov edx, 26	; 26 chars in welcome msg
 	mov ecx, welcome
 	mov ebx, 1;	; stdout
 	mov eax, 4	; SYS_WRITE
@@ -167,6 +169,7 @@ read_exit:
 
 ;TODO: Parse and evaluate the expression from the stack
 parse:
+	jmp exit
 	mov eax, 0
 	test [count], eax	;If expr length = 0
 	jnz exit		;Exit
@@ -201,8 +204,8 @@ parse_loop2:
 
 ;An invalid expression was provided. Print error.	
 invalid_expr_err:
-	mov edx, 26	; 24 chars in welcome msg
-	mov ecx, welcome
+	mov edx, 7	; 5 chars in error msg
+	mov ecx, error
 	mov ebx, 1;	; stdout
 	mov eax, 4	; SYS_WRITE
 	int 0x80	; syscall

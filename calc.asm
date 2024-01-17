@@ -169,38 +169,139 @@ read_exit:
 
 ;TODO: Parse and evaluate the expression from the stack
 parse:
-	jmp exit
 	mov eax, 0
 	test [count], eax	;If expr length = 0
 	jnz exit		;Exit
-parse_loop1:		
-	pop eax			
+	mov eax, [count]
+	mov eax, 0
+parse_loop1:
+	;If we start with a math symbol it is a bad expression		
+	pop eax		
+	;Decrement count		
+	mov ebx, [count]
+	sub ebx, 1
+	mov [count], ebx	
+
 	mov ebx, [addition]
 	test eax, ebx
 	jnz invalid_expr_err
 	mov ebx, [subtraction]
 	test eax, ebx
-
+	jnz invalid_expr_err
 	mov ebx, [multiplication]
 	test eax, ebx
-
+	jnz invalid_expr_err
 	mov ebx, [division]
 	test eax, ebx
+	jnz invalid_expr_err
+	
+	;Now we know it must be a number
+	;Put it in a buffer to store our result
+	mov [number], eax
 
-parse_loop2:	
-	pop eax		
+parse_loop2:
+	;If count == 0: return
+	mov eax, 0
+	test eax, [count]
+	jnz exit
+	;Else: decrement count and pop
+	mov ebx, [count]
+	sub ebx, 1
+	mov [count], ebx
+
+	pop eax	
+	;If it's a symbol do the symbol function	
 	mov ebx, [addition]
 	test eax, ebx
+	jnz adder			;[number] += pop eax 
 	
-	mov ebx, [subtraction]
+	mov ebx, [subtraction]		
 	test eax, ebx
-
+	jnz subtracter			;[number] -= pop eax
+ 
 	mov ebx, [multiplication]
 	test eax, ebx
+	jnz multiplier			;[number] *= pop eax
 
 	mov ebx, [division]
 	test eax, ebx
+	jnz divider			;[number] /= pop eax
 	
+	;If we got here it was a number => error
+	jnz invalid_expr_err
+
+adder:
+	mov eax, [count]
+	;If count == 0 => we ended on a symbol => error=	]
+	mov eax, 0
+	test eax, [count]
+	jnz invalid_expr_err
+	;Else: decrement count and pop
+	mov ebx, [count]
+	sub ebx, 1
+	mov [count], ebx
+	
+	;Do our addition
+	pop eax
+	mov ebx, [number]
+	add ebx, eax
+	mov [number], ebx
+	;Jump back to parse_loop2 to find a symbol	
+	jmp parse_loop2
+subtracter:
+	;If count == 0 => we ended on a symbol => error
+	mov eax, 0
+	test eax, [count]
+	jnz exit
+	;Else: decrement count and pop
+	mov ebx, [count]
+	sub ebx, 1
+	mov [count], ebx
+	
+	;Do our addition
+	pop eax
+	mov ebx, [number]
+	sub ebx, eax
+	mov [number], ebx
+	;Jump back to parse_loop2 to find a symbol	
+	jmp parse_loop2
+multiplier:
+	;If count == 0 => we ended on a symbol => error                      
+	mov eax, 0
+	test eax, [count]
+	jnz exit
+	;Else: decrement count and pop
+	mov ebx, [count]
+	sub ebx, 1
+	mov [count], ebx
+	
+	;Do our addition
+	pop eax
+	mov ebx, [number]
+	imul ebx, eax
+	mov [number], ebx
+	;Jump back to parse_loop2 to find a symbol	
+	jmp parse_loop2
+
+;Let's hold off on division for now
+divider:
+	;If count == 0 => we ended on a symbol => error
+	mov eax, 0
+	test eax, [count]
+	jnz exit
+	;Else: decrement count and pop
+	mov ebx, [count]
+	sub ebx, 1
+	mov [count], ebx
+	
+	;Do our addition
+	pop eax
+	mov ebx, [number]
+	; idiv ebx, eax
+	mov [number], ebx
+	;Jump back to parse_loop2 to find a symbol	
+	jmp parse_loop2
+
 
 ;An invalid expression was provided. Print error.	
 invalid_expr_err:
@@ -216,6 +317,14 @@ invalid_expr_err:
 
 ;Normal exit
 exit:
-	mov eax, 1
-	int 0x80
+	mov ecx, [number]
+;	
+;	mov edx, 1	; 1 character
+;	mov ebx, 1	; stdout
+;	mov eax, 4	; SYS_WRITE
+;	int 0x80	; syscall
+
+	mov eax, 1	; SYS_EXIT
+	int 0x80	; syscall
+
 	

@@ -29,8 +29,8 @@ _start:
 	mov eax, 4	; SYS_WRITE
 	int 0x80	; syscall
 	
-	mov eax, 0
-	push eax	; We're using the lowest entry in the stack to count expr length
+	;mov eax, 0
+	;push eax	; We're using the lowest entry in the stack to count expr length
 read:
 	mov eax, 3	; SYS_READ
 	mov ebx, 0	; stdin
@@ -82,6 +82,7 @@ read:
 	mov eax, [buffer]	
 	sub eax, [lwr_int]	;Convert eax (in ASCII) to binary
 	mov [number], eax
+	mov eax, [number]
 	mov eax, 0
 	mov [buffer], eax 
 read_loop:
@@ -136,11 +137,11 @@ read_loop:
 	add ebx, eax		;Sum
 	mov [number], ebx
 	mov eax, 0
-	mov [buffer], eax
 	jmp read_loop
 
 
 read_recurse:
+	;Pushing the value in number to stack + increment count
 	mov ebx, [number]
 	push ebx
 	mov ebx, 0
@@ -149,12 +150,12 @@ read_recurse:
 	add ebx, 1
 	mov [count], ebx	
 read_symbol:
+	;Push the symbol to stack + increment count
 	mov ebx, [count]
 	add ebx, 1
 	mov [count], ebx
 	push eax
 	mov eax, 0
-	mov [buffer], eax
 	jmp read
 read_exit:
 	mov ebx, [number]
@@ -170,11 +171,14 @@ read_exit:
 ;TODO: Parse and evaluate the expression from the stack
 parse:
 	mov eax, 0
-	test [count], eax	;If expr length = 0
-	jnz exit		;Exit
+	cmp [count], eax	;If expr length = 0
+	je exit		;Exit
 	mov eax, [count]
 	mov eax, 0
 parse_loop1:
+	mov eax, [number]
+	mov eax, [count]
+	mov eax, 0
 	;If we start with a math symbol it is a bad expression		
 	pop eax		
 	;Decrement count		
@@ -183,27 +187,29 @@ parse_loop1:
 	mov [count], ebx	
 
 	mov ebx, [addition]
-	test eax, ebx
-	jnz invalid_expr_err
+	cmp eax, ebx
+	je invalid_expr_err
 	mov ebx, [subtraction]
-	test eax, ebx
-	jnz invalid_expr_err
+	cmp eax, ebx
+	je invalid_expr_err
 	mov ebx, [multiplication]
-	test eax, ebx
-	jnz invalid_expr_err
+	cmp eax, ebx
+	je invalid_expr_err
 	mov ebx, [division]
-	test eax, ebx
-	jnz invalid_expr_err
+	cmp eax, ebx
+	je invalid_expr_err
 	
 	;Now we know it must be a number
 	;Put it in a buffer to store our result
 	mov [number], eax
 
 parse_loop2:
+	mov eax, [number]
+	mov eax, [count]
 	;If count == 0: return
 	mov eax, 0
-	test eax, [count]
-	jnz exit
+	cmp eax, [count]
+	je exit
 	;Else: decrement count and pop
 	mov ebx, [count]
 	sub ebx, 1
@@ -212,30 +218,31 @@ parse_loop2:
 	pop eax	
 	;If it's a symbol do the symbol function	
 	mov ebx, [addition]
-	test eax, ebx
-	jnz adder			;[number] += pop eax 
+	cmp eax, ebx
+	je adder			;[number] += pop eax 
 	
 	mov ebx, [subtraction]		
-	test eax, ebx
-	jnz subtracter			;[number] -= pop eax
+	cmp eax, ebx
+	je subtracter			;[number] -= pop eax
  
 	mov ebx, [multiplication]
-	test eax, ebx
-	jnz multiplier			;[number] *= pop eax
+	cmp eax, ebx
+	je multiplier			;[number] *= pop eax
 
 	mov ebx, [division]
-	test eax, ebx
-	jnz divider			;[number] /= pop eax
+	cmp eax, ebx
+	je divider			;[number] /= pop eax
 	
 	;If we got here it was a number => error
-	jnz invalid_expr_err
+	jmp invalid_expr_err
 
 adder:
+	mov eax, [number]
 	mov eax, [count]
 	;If count == 0 => we ended on a symbol => error=	]
 	mov eax, 0
-	test eax, [count]
-	jnz invalid_expr_err
+	cmp eax, [count]
+	je invalid_expr_err
 	;Else: decrement count and pop
 	mov ebx, [count]
 	sub ebx, 1
@@ -251,8 +258,8 @@ adder:
 subtracter:
 	;If count == 0 => we ended on a symbol => error
 	mov eax, 0
-	test eax, [count]
-	jnz exit
+	cmp eax, [count]
+	je exit
 	;Else: decrement count and pop
 	mov ebx, [count]
 	sub ebx, 1
@@ -268,8 +275,8 @@ subtracter:
 multiplier:
 	;If count == 0 => we ended on a symbol => error                      
 	mov eax, 0
-	test eax, [count]
-	jnz exit
+	cmp eax, [count]
+	je exit
 	;Else: decrement count and pop
 	mov ebx, [count]
 	sub ebx, 1

@@ -3,7 +3,9 @@ We've written a calculator using 32-bit x86 assembly code. Development is simpli
 machine (or VM) using the NASM assembler and GDB debugging tool.
 
 ## Remarks
-- *As of now the program calc.asm only saves stdin to stack*
+- Parsing seems to work
+- Debugging issue with reading in command line
+- Bad inputs yield good error
 - The asm_training directory has some simple programs for practice
 - Filenames (lines 9,10) in the Dockerfile indicate which program is Dockering
   

@@ -1,4 +1,4 @@
-nasm -f elf -o input.o input.asm
-ld -m elf_i386 -o input input.o
-./bin/input
+nasm -f elf -o calc.o calc.asm
+ld -m elf_i386 -o calc calc.o
+./calc
 

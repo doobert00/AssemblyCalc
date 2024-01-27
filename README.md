@@ -9,6 +9,7 @@ The asm_training directory has some simple programs that were used for practice.
 - Funny (incorrect) behavior when output is a two digit number
 - Parsing works: we get the correct result in all cases but cannot print a two digit number yet
 - Improper equations (eg. non-math symbols and equations out of order) yield error.
+- Avoiding division because number theorists will tell you that such things don't exist for integers...
 
 ## Running
 If you have an x86 machine (and trust my code) you can run with:

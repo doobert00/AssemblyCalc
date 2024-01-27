@@ -13,7 +13,7 @@ The asm_training directory has some simple programs that were used for practice.
 ## Running
 If you have an x86 machine (and trust my code) you can run with:
 ```
-nasm -f elf -o <file>.o -o <file>.arm 
+nasm -f elf -o <file>.o <file>.asm 
 ```
 ```
 ld -m elf_i386 -o <file> <file>.o

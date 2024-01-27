@@ -4,7 +4,7 @@ RUN apt-get update
 
 RUN apt-get install -y nasm binutils
 
-COPY input.asm /app/
+COPY calc.asm /app/
 
 RUN nasm -f elf -o /app/calc.o /app/calc.asm
 RUN ld -m elf_i386 -s -o /app/calc /app/calc.o
@@ -13,4 +13,4 @@ RUN ld -m elf_i386 -s -o /app/calc /app/calc.o
 
 #COPY --from=build /app/intprint /app/
 
-CMD ["/app/input"]
+CMD ["/app/calc"]

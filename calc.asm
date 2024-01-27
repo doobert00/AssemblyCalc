@@ -1,9 +1,10 @@
 section .bss
-	buffer resb 1	; Reserve one byte for reading in user input
+	buffer resb 4	; Reserve one byte for reading in user input
 	number resb 4	; Reserve for summing numbers in
 section .data
 	welcome db "Please enter an equation",13,10	 	;The welcome string	
 	error db "Error",13,10					;The error string
+	return db 13,10					;A newline for printing	
 
 	count dq 0						;Expression char len
 	ten dq 10						;Useful for powers of 10
@@ -42,26 +43,27 @@ read:
 	mov ebx, [space]	
 	cmp eax, ebx
 	je read		;Don't save buff read next char
-	
-	mov eax, [buffer]	;If buffer = +
-	mov ebx, [addition]
-	cmp eax, ebx
-	je read_symbol	
 
-	mov eax, [buffer]	;If buffer = -
-	mov ebx, [subtraction]
-	cmp eax, ebx
-	je read_symbol	
-
-	mov eax, [buffer]	;If buffer = *
-	mov ebx, [multiplication]
-	cmp eax, ebx
-	je read_symbol
-
-	mov eax, [buffer]	;If buffer = /
-	mov ebx, [division]
-	cmp eax, ebx
-	je read_symbol		
+;If we read a symbol here something was wrong	
+;	mov eax, [buffer]	;If buffer = +
+;	mov ebx, [addition]
+;	cmp eax, ebx
+;	je read_symbol	
+;
+;	mov eax, [buffer]	;If buffer = -
+;	mov ebx, [subtraction]
+;	cmp eax, ebx
+;	je read_symbol	
+;
+;	mov eax, [buffer]	;If buffer = *
+;	mov ebx, [multiplication]
+;	cmp eax, ebx
+;	je read_symbol
+;
+;	mov eax, [buffer]	;If buffer = /
+;	mov ebx, [division]
+;	cmp eax, ebx
+;	je read_symbol		
 	
 	;NOTE: WE WILL PARSE IFF WE FIND A LINEFEED (ELSE WE ERROR)
 	mov eax, [buffer]	;If buffer == linefeed 
@@ -150,7 +152,7 @@ read_recurse:
 	add ebx, 1
 	mov [count], ebx	
 read_symbol:
-	;Push the symbol to stack + increment count
+;Push the symbol to stack + increment count
 	mov ebx, [count]
 	add ebx, 1
 	mov [count], ebx
@@ -324,12 +326,22 @@ invalid_expr_err:
 
 ;Normal exit
 exit:
-	mov ecx, [number]
-;	
-;	mov edx, 1	; 1 character
-;	mov ebx, 1	; stdout
-;	mov eax, 4	; SYS_WRITE
-;	int 0x80	; syscall
+
+	mov ecx, [number]	
+	add ecx, [lwr_int]
+	mov [number], ecx
+	mov ecx, number
+	mov edx, 1	; 1 character
+	mov ebx, 1	; stdout
+	mov eax, 4	; SYS_WRITE
+	int 0x80	; syscall
+	
+	mov ecx, return
+	mov edx, 2
+	mov ebx, 1
+	mov eax, 4
+	int 0x80
+
 
 	mov eax, 1	; SYS_EXIT
 	int 0x80	; syscall

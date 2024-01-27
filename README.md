@@ -2,13 +2,14 @@
 We've written a calculator using 32-bit x86 assembly code. Development is simplist on a Linux
 machine (or VM) using the NASM assembler and GDB debugging tool.
 
-## Remarks
-- Parsing seems to work
-- Debugging issue with reading in command line
-- Bad inputs yield good error
-- The asm_training directory has some simple programs for practice
-- Filenames (lines 9,10) in the Dockerfile indicate which program is Dockering
-  
+The asm_training directory has some simple programs that were used for practice.
+
+## Status
+- Functionality for addition, multiplication, subtraction when the output is a single digit
+- Funny (incorrect) behavior when output is a two digit number
+- Parsing works: we get the correct result in all cases but cannot print a two digit number yet
+- Improper equations (eg. non-math symbols and equations out of order) yield error.
+
 ## Running
 If you have an x86 machine (and trust my code) you can run with:
 ```
@@ -22,7 +23,7 @@ ld -m elf_i386 -o <file> <file>.o
 ```
 
 ## Running in Docker
-To build the image do:
+The programs can also be run on Docker by changing the filenames on lines 9 and 10. To build the image do:
 
 ```
 docker build -t calc:1.0 .

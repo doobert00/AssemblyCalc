@@ -2,8 +2,6 @@
 We've written a calculator using 32-bit x86 assembly code. Development is simplist on a Linux
 machine (or VM) using the NASM assembler and GDB debugging tool.
 
-The asm_training directory has some simple programs that were used for practice.
-
 ## Status
 - Functionality for addition, multiplication, subtraction when the output is a single digit
 - Funny (incorrect) behavior when output is a two digit number
@@ -35,3 +33,8 @@ To run the image do:
 ```
 docker run -it -d --name calc calc:1.0
 ```
+
+## Resources
+- The asm_training directory has some simple programs that were used for practice.
+- [Here](https://www.youtube.com/playlist?list=PL2EF13wm-hWCoj6tUBGUmrkJmH1972dBB) is a nice youtube playlist for learning x86.
+- [Here](https://www.cs.virginia.edu/~evans/cs216/guides/x86.html) is x86 documentation.
